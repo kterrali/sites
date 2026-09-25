@@ -1,97 +1,525 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#11131d" />
-  <title>Instant Paradis — Nail Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sky Hopper</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+    :root {
+      --panel: rgba(10, 22, 44, 0.76);
+      --accent: #ffd54a;
+      --text: #ffffff;
+    }
 
-    :root { --bg:#0f1018; --surface:#171925; --surface2:#202332; --line:#303549; --text:#f6f3fa; --muted:#aeb1c3; --purple:#7c7eff; --lav:#c9a6ff; --pink:#ffb6d9; --green:#43d49a; }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body { margin:0; color:var(--text); font-family:'DM Sans',system-ui,sans-serif; background:radial-gradient(circle at 78% 3%, #322458 0, transparent 29rem),radial-gradient(circle at 11% 45%,#2e1b3e 0,transparent 30rem),var(--bg); }
-    a { color:inherit; text-decoration:none; }
-    .app { max-width:1440px; min-height:100vh; margin:auto; display:grid; grid-template-columns:255px 1fr; background:rgba(15,16,24,.76); }
-    aside { position:sticky; top:0; height:100vh; padding:24px 14px; border-right:1px solid var(--line); background:rgba(20,21,32,.82); backdrop-filter:blur(18px); }
-    .brand { display:flex; gap:11px; align-items:center; padding:8px 10px 26px; font-weight:700; letter-spacing:.02em; }
-    .brand-mark { display:grid; place-items:center; width:34px; height:34px; border-radius:12px; color:#1c152c; background:linear-gradient(135deg,var(--pink),var(--lav)); font-family:'Playfair Display',serif; font-size:21px; }
-    .brand small { display:block; margin-top:2px; color:var(--muted); font-weight:500; font-size:11px; }
-    .server { display:flex; gap:9px; align-items:center; margin:12px 8px 18px; padding:10px; background:#242638; border-radius:12px; font-size:13px; }
-    .dot { width:9px; height:9px; background:var(--green); border-radius:100%; box-shadow:0 0 12px var(--green); }
-    .group { margin:20px 7px 7px; color:#74788f; text-transform:uppercase; font-size:10px; font-weight:700; letter-spacing:.1em; }
-    nav a { display:flex; gap:10px; align-items:center; margin:3px 0; padding:10px 11px; color:#bfc1d0; border-radius:8px; font-size:14px; transition:.2s; }
-    nav a:hover, nav a.active { background:#292c3e; color:white; }
-    nav a.active { box-shadow:inset 3px 0 0 var(--pink); }
-    .side-bottom { position:absolute; bottom:20px; left:20px; right:20px; padding:14px; border:1px solid #3b3654; border-radius:14px; background:linear-gradient(135deg,#29243c,#1e2030); }
-    .side-bottom p { margin:4px 0 12px; color:#bbb6d0; font-size:12px; line-height:1.4; }
-    .button { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; border-radius:10px; padding:12px 16px; color:white; background:linear-gradient(135deg,#7477ff,#9a6cff); font:600 14px 'DM Sans',sans-serif; box-shadow:0 9px 25px rgba(118,103,255,.25); transition:transform .2s,filter .2s; }
-    .button:hover { transform:translateY(-2px); filter:brightness(1.1); }
-    .button.ghost { background:#292c3d; border:1px solid #41455b; box-shadow:none; }
-    main { overflow:hidden; }
-    header { position:sticky; z-index:5; top:0; display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid rgba(53,56,75,.7); background:rgba(18,19,29,.75); backdrop-filter:blur(16px); }
-    .crumb { color:#aeb1c2; font-size:14px; } .crumb b { color:#f5efff; }
-    .header-actions { display:flex; gap:10px; align-items:center; } .insta { display:grid; place-items:center; width:37px; height:37px; border:1px solid #41445a; border-radius:10px; color:#ffb6d9; }
-    section { padding:70px 40px; max-width:1190px; margin:auto; }
-    .hero { min-height:595px; position:relative; display:grid; align-items:center; padding-top:72px; }
-    .hero:after { content:''; position:absolute; width:510px; height:510px; right:-165px; top:20px; border:1px solid rgba(203,167,255,.18); border-radius:50%; box-shadow:0 0 0 45px rgba(203,167,255,.035),0 0 0 90px rgba(203,167,255,.02); }
-    .hero-content { position:relative; z-index:1; max-width:690px; }
-    .pill { display:inline-flex; gap:8px; align-items:center; padding:8px 11px; color:#dac8ff; background:rgba(130,108,194,.16); border:1px solid rgba(201,166,255,.28); border-radius:999px; font-size:12px; }
-    h1 { max-width:710px; margin:18px 0; font:600 clamp(46px,7vw,88px)/.98 'Playfair Display',serif; letter-spacing:-.055em; }
-    h1 em { color:var(--pink); font-weight:600; }
-    .hero p { max-width:525px; color:#c3c1cf; font-size:18px; line-height:1.65; }
-    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; }
-    .mini-card { position:absolute; z-index:2; right:40px; bottom:65px; width:276px; padding:17px; border:1px solid #49415d; border-radius:18px; background:rgba(30,29,45,.82); box-shadow:0 22px 52px rgba(0,0,0,.32); backdrop-filter:blur(10px); transform:rotate(3deg); }
-    .mini-card .title { display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700; } .mini-card p { margin:10px 0 0; color:#aaa8ba; font-size:12px; line-height:1.45; }
-    .section-kicker { margin-bottom:8px; color:var(--lav); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
-    h2 { margin:0; font:600 clamp(31px,4vw,48px)/1.1 'Playfair Display',serif; letter-spacing:-.03em; }
-    .lead { max-width:650px; color:var(--muted); line-height:1.65; }
-    .gallery { display:grid; grid-template-columns:1.15fr .85fr .85fr; grid-template-rows:195px 195px; gap:14px; margin-top:32px; }
-    .photo { position:relative; overflow:hidden; min-height:150px; border:1px solid #3a3d50; border-radius:16px; background:linear-gradient(135deg,#3a2844,#201f31); }
-    .photo:before { content:''; position:absolute; inset:0; background:linear-gradient(145deg,rgba(255,182,217,.36),transparent 45%),linear-gradient(20deg,rgba(124,126,255,.28),transparent 57%); transition:transform .35s; }
-    .photo:hover:before { transform:scale(1.14); }
-    .photo span { position:absolute; z-index:1; bottom:13px; left:13px; padding:6px 9px; background:rgba(15,16,25,.7); border:1px solid rgba(255,255,255,.14); border-radius:8px; font-size:11px; }
-    .photo:nth-child(1) { grid-row:span 2; background:linear-gradient(160deg,#e7b5cd 0%,#75537b 42%,#211c34 100%); } .photo:nth-child(2){background:linear-gradient(145deg,#f4d6b5,#cc829c 52%,#33203e);} .photo:nth-child(3){background:linear-gradient(145deg,#8262a1,#dfb4e1 44%,#423257);} .photo:nth-child(4){background:linear-gradient(145deg,#e1b6ba,#89476f 52%,#36213d);} .photo:nth-child(5){background:linear-gradient(145deg,#a6a1e0,#e4c5e4 52%,#53476d);}
-    .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:30px; }
-    .service { padding:22px; border:1px solid #373a4e; border-radius:16px; background:linear-gradient(150deg,rgba(37,39,56,.92),rgba(25,26,39,.92)); transition:.25s; }
-    .service:hover { transform:translateY(-5px); border-color:#75629b; box-shadow:0 14px 30px rgba(0,0,0,.2); } .service-icon { font-size:23px; } .service h3 { margin:16px 0 8px; font-size:17px; } .service p { min-height:64px; color:var(--muted); font-size:13px; line-height:1.55; } .service a { color:#d6bdff; font-size:13px; font-weight:700; }
-    .booking { display:grid; grid-template-columns:.8fr 1.2fr; gap:30px; align-items:start; padding:34px; border:1px solid #48405e; border-radius:22px; background:radial-gradient(circle at 90% 0,#463163 0,transparent 22rem),#1b1c29; }
-    .booking p { color:#b9b5c6; line-height:1.65; } form { display:grid; grid-template-columns:1fr 1fr; gap:12px; } input,select,textarea { width:100%; padding:13px 14px; color:#efeff8; outline:none; border:1px solid #41455b; border-radius:10px; background:#242636; font:14px 'DM Sans',sans-serif; } select option { background:#242636; } textarea { grid-column:span 2; min-height:96px; resize:vertical; } .form-action { grid-column:span 2; display:flex; align-items:center; justify-content:space-between; gap:12px; } .status { display:none; color:#8cf0c4; font-size:13px; }
-    footer { padding:24px 40px; border-top:1px solid #303346; color:#888ba0; font-size:12px; text-align:center; }
-    @media(max-width:850px){ .app{display:block;} aside{display:none;} header{padding:14px 20px;} section{padding:55px 20px;} .hero{min-height:620px;} .mini-card{right:18px;bottom:28px;width:240px;} .gallery{grid-template-columns:1fr 1fr;grid-template-rows:180px 180px 180px;} .photo:nth-child(1){grid-row:span 2;} .service-grid,.booking{grid-template-columns:1fr;} footer{padding:22px 20px;} }
-    @media(max-width:500px){ h1{font-size:51px;} .hero p{font-size:16px;} .gallery{grid-template-columns:1fr 1fr;gap:9px;} .photo:nth-child(1){grid-row:span 1;}.photo{min-height:140px;} .photo:nth-child(5){display:none;} form{grid-template-columns:1fr;} textarea,.form-action{grid-column:span 1;} .form-action{align-items:stretch;flex-direction:column;} .form-action .button{width:100%;} .header-actions .ghost{display:none;} }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #52c7f1, #1c78bf);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #game-wrap {
+      position: relative;
+      width: min(92vw, 420px);
+      aspect-ratio: 9 / 16;
+      max-height: 90vh;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.42);
+      background: #75d6f7;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    #hud {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      color: var(--text);
+    }
+
+    #score {
+      position: absolute;
+      top: 28px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(34px, 9vw, 54px);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    #best {
+      position: absolute;
+      top: 92px;
+      width: 100%;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.28));
+      transition: opacity 0.2s ease;
+    }
+
+    #card {
+      width: min(100%, 325px);
+      padding: 26px 22px;
+      border: 3px solid rgba(255, 255, 255, 0.78);
+      border-radius: 20px;
+      text-align: center;
+      color: white;
+      background: var(--panel);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+    }
+
+    #card h1 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 34px;
+      letter-spacing: 0.4px;
+      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    #card p {
+      margin: 8px 0;
+      line-height: 1.45;
+      font-size: 15px;
+    }
+
+    #card .result {
+      display: none;
+      margin: 18px 0;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 12px;
+      color: #18223d;
+      background: var(--accent);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #ce9f10;
+      transition: transform 0.08s ease;
+    }
+
+    button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #ce9f10;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none !important;
+    }
+
+    #hint {
+      position: absolute;
+      bottom: 22px;
+      width: 100%;
+      color: rgba(255, 255, 255, 0.92);
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      text-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside>
-      <a class="brand" href="#accueil"><span class="brand-mark">I</span><span>INSTANT PARADIS<small>Nail studio · communauté beauté</small></span></a>
-      <div class="server"><span class="dot"></span><span>Ouvert aux réservations</span></div>
-      <div class="group">Navigation</div>
-      <nav>
-        <a class="active" href="#accueil">✦ Accueil</a>
-        <a href="#creations">⌁ Créations</a>
-        <a href="#prestations">✧ Prestations</a>
-        <a href="#reservation">♡ Réserver</a>
-      </nav>
-      <div class="side-bottom"><span style="font-size:19px">✦</span><strong style="display:block;margin-top:7px;font-size:13px">Ton moment beauté</strong><p>Une pose qui te ressemble, dans une ambiance douce et soignée.</p><a class="button" style="width:100%;padding:10px" href="#reservation">Prendre rendez-vous</a></div>
-    </aside>
-    <main>
-      <header><div class="crumb">instant-paradis / <b># accueil</b></div><div class="header-actions"><a class="insta" title="Instagram" href="https://www.instagram.com/instant__paradis/" target="_blank" rel="noreferrer">◎</a><a class="button ghost" href="#creations">Nos créations</a><a class="button" href="#reservation">Réserver ✦</a></div></header>
-      <section class="hero" id="accueil">
-        <div class="hero-content"><span class="pill"><span class="dot"></span> Disponible sur rendez-vous</span><h1>Bienvenue dans ton <em>Instant</em> Paradis.</h1><p>Des ongles soignés, des créations pensées pour ton style et un moment de douceur qui t’appartient vraiment.</p><div class="hero-actions"><a class="button" href="#reservation">Réserver mon créneau ✦</a><a class="button ghost" href="#creations">Découvrir les poses</a></div></div>
-        <div class="mini-card"><div class="title"><span>✦ # ton-moment-à-toi</span><span class="dot"></span></div><p>Une pose personnalisée, de l’écoute et une finition qui fait la différence.</p></div>
-      </section>
-      <section id="creations"><div class="section-kicker"># créations</div><h2>Des poses qui parlent pour toi.</h2><p class="lead">Une sélection visuelle dans l’esprit du feed Instagram. Remplace ces aperçus par les meilleures photos du salon pour révéler tout l’univers d’Instant Paradis.</p><div class="gallery"><div class="photo"><span>✦ Création signature</span></div><div class="photo"><span># nude chic</span></div><div class="photo"><span># violet glow</span></div><div class="photo"><span># french twist</span></div><div class="photo"><span># soft glam</span></div></div></section>
-      <section id="prestations"><div class="section-kicker"># prestations</div><h2>Choisis ton prochain mood.</h2><p class="lead">Les prestations ci-dessous servent de présentation. Les intitulés, tarifs et durées pourront être adaptés à la carte réelle du salon.</p><div class="service-grid"><article class="service"><div class="service-icon">✦</div><h3>Pose complète</h3><p>Une pose adaptée à la forme de tes mains et à l’inspiration que tu veux porter.</p><a href="#reservation">Demander un créneau →</a></article><article class="service"><div class="service-icon">◌</div><h3>Semi-permanent</h3><p>Une finition nette, brillante et élégante pour accompagner ton quotidien.</p><a href="#reservation">Demander un créneau →</a></article><article class="service"><div class="service-icon">♡</div><h3>Nail art</h3><p>Des détails, des couleurs et une création personnalisée à ton image.</p><a href="#reservation">Imaginer ma pose →</a></article></div></section>
-      <section id="reservation"><div class="booking"><div><div class="section-kicker"># réserver-un-créneau</div><h2>Ton paradis commence ici.</h2><p>Envoie une demande avec tes disponibilités. Le salon pourra ensuite confirmer ton créneau et discuter de ton inspiration avec toi.</p><p style="font-size:13px">Tu peux aussi retrouver les nouveautés et écrire directement sur <a style="color:#e9befb;font-weight:700" href="https://www.instagram.com/instant__paradis/" target="_blank" rel="noreferrer">Instagram @instant__paradis</a>.</p></div><form id="booking-form"><input required aria-label="Nom" placeholder="Ton prénom" /><input required type="text" aria-label="Contact" placeholder="Instagram ou téléphone" /><select required aria-label="Prestation"><option value="">Prestation souhaitée</option><option>Pose complète</option><option>Semi-permanent</option><option>Nail art</option><option>Je ne sais pas encore</option></select><input aria-label="Disponibilités" placeholder="Jour ou créneau souhaité" /><textarea aria-label="Message" placeholder="Une idée de pose, une couleur, une question ?"></textarea><div class="form-action"><span class="status" id="status">✦ Demande prête ! Le salon te recontactera pour confirmer.</span><button class="button" type="submit">Envoyer ma demande ✦</button></div></form></div></section>
-      <footer>© 2026 Instant Paradis · Nail studio · Réalisé avec soin ✦</footer>
-    </main>
-  </div>
+  <main id="game-wrap">
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud">
+      <div id="score">0</div>
+      <div id="best">Meilleur score : 0</div>
+      <div id="hint">ESPACE / CLIC / TAP pour voler</div>
+    </div>
+
+    <section id="overlay">
+      <div id="card">
+        <h1 id="title">Sky Hopper</h1>
+        <p id="description">
+          Traverse les tuyaux sans les toucher.<br />
+          Appuie sur <strong>Espace</strong>, clique ou touche l’écran.
+        </p>
+
+        <div class="result" id="result"></div>
+
+        <button id="playButton">JOUER</button>
+      </div>
+    </section>
+  </main>
+
   <script>
-    document.getElementById('booking-form').addEventListener('submit', function(e) { e.preventDefault(); document.getElementById('status').style.display='block'; this.reset(); });
-    document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active')}));
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const wrap = document.getElementById("game-wrap");
+    const scoreElement = document.getElementById("score");
+    const bestElement = document.getElementById("best");
+    const overlay = document.getElementById("overlay");
+    const playButton = document.getElementById("playButton");
+    const title = document.getElementById("title");
+    const description = document.getElementById("description");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+
+    const W = 420;
+    const H = 700;
+    canvas.width = W;
+    canvas.height = H;
+
+    let bestScore = Number(localStorage.getItem("skyHopperBest") || 0);
+    let score = 0;
+    let gameRunning = false;
+    let gameStarted = false;
+    let animationId = null;
+    let lastTime = 0;
+    let elapsed = 0;
+
+    const bird = {
+      x: 105,
+      y: H / 2,
+      radius: 17,
+      velocity: 0,
+      rotation: 0
+    };
+
+    const pipes = [];
+
+    const settings = {
+      gravity: 0.38,
+      flapPower: -6.7,
+      pipeWidth: 66,
+      pipeGap: 165,
+      pipeSpeed: 2.6,
+      spawnEvery: 1500,
+      groundHeight: 90
+    };
+
+    function updateBest() {
+      bestElement.textContent = `Meilleur score : ${bestScore}`;
+    }
+
+    function resetGame() {
+      score = 0;
+      elapsed = 0;
+      pipes.length = 0;
+
+      bird.y = H / 2;
+      bird.velocity = 0;
+      bird.rotation = 0;
+
+      scoreElement.textContent = score;
+      updateBest();
+    }
+
+    function startGame() {
+      cancelAnimationFrame(animationId);
+
+      resetGame();
+      gameRunning = true;
+      gameStarted = true;
+      lastTime = performance.now();
+
+      overlay.classList.add("hidden");
+      hint.style.display = "block";
+
+      flap();
+      animationId = requestAnimationFrame(loop);
+    }
+
+    function flap() {
+      if (!gameRunning) return;
+      bird.velocity = settings.flapPower;
+    }
+
+    function gameOver() {
+      if (!gameRunning) return;
+
+      gameRunning = false;
+      cancelAnimationFrame(animationId);
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("skyHopperBest", bestScore);
+      }
+
+      updateBest();
+      hint.style.display = "none";
+
+      title.textContent = "Partie terminée";
+      description.textContent = score === 0
+        ? "Presque ! Essaie de garder un rythme régulier."
+        : "Bien joué ! Tu peux faire encore mieux.";
+
+      result.style.display = "block";
+      result.innerHTML = `
+        Score : <strong>${score}</strong><br>
+        Meilleur score : <strong>${bestScore}</strong>
+      `;
+
+      playButton.textContent = "REJOUER";
+      overlay.classList.remove("hidden");
+    }
+
+    function spawnPipe() {
+      const minTop = 85;
+      const maxTop = H - settings.groundHeight - settings.pipeGap - 85;
+      const gapY = Math.random() * (maxTop - minTop) + minTop;
+
+      pipes.push({
+        x: W + 20,
+        topHeight: gapY,
+        bottomY: gapY + settings.pipeGap,
+        counted: false
+      });
+    }
+
+    function update(delta) {
+      const factor = delta / 16.67;
+
+      bird.velocity += settings.gravity * factor;
+      bird.y += bird.velocity * factor;
+      bird.rotation = Math.max(-0.45, Math.min(1.1, bird.velocity * 0.08));
+
+      elapsed += delta;
+
+      if (elapsed >= settings.spawnEvery) {
+        spawnPipe();
+        elapsed = 0;
+      }
+
+      for (let i = pipes.length - 1; i >= 0; i--) {
+        const pipe = pipes[i];
+        pipe.x -= settings.pipeSpeed * factor;
+
+        if (!pipe.counted && pipe.x + settings.pipeWidth < bird.x) {
+          pipe.counted = true;
+          score++;
+          scoreElement.textContent = score;
+        }
+
+        if (pipe.x + settings.pipeWidth < -20) {
+          pipes.splice(i, 1);
+        }
+      }
+
+      const birdLeft = bird.x - bird.radius;
+      const birdRight = bird.x + bird.radius;
+      const birdTop = bird.y - bird.radius;
+      const birdBottom = bird.y + bird.radius;
+
+      if (birdTop < 0 || birdBottom > H - settings.groundHeight) {
+        gameOver();
+        return;
+      }
+
+      for (const pipe of pipes) {
+        const horizontalCollision =
+          birdRight > pipe.x &&
+          birdLeft < pipe.x + settings.pipeWidth;
+
+        const verticalCollision =
+          birdTop < pipe.topHeight ||
+          birdBottom > pipe.bottomY;
+
+        if (horizontalCollision && verticalCollision) {
+          gameOver();
+          return;
+        }
+      }
+    }
+
+    function drawCloud(x, y, scale = 1) {
+      ctx.fillStyle = "rgba(255,255,255,0.78)";
+      ctx.beginPath();
+      ctx.arc(x, y, 18 * scale, 0, Math.PI * 2);
+      ctx.arc(x + 23 * scale, y - 10 * scale, 24 * scale, 0, Math.PI * 2);
+      ctx.arc(x + 50 * scale, y, 17 * scale, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawBackground() {
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "#63d4f5");
+      sky.addColorStop(1, "#c6f5ff");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+
+      drawCloud(50, 125, 0.85);
+      drawCloud(280, 210, 0.65);
+      drawCloud(190, 390, 0.48);
+
+      ctx.fillStyle = "#7acb59";
+      ctx.fillRect(0, H - settings.groundHeight - 12, W, 12);
+
+      ctx.fillStyle = "#d9a44a";
+      ctx.fillRect(0, H - settings.groundHeight, W, settings.groundHeight);
+
+      ctx.fillStyle = "#c48b39";
+      for (let x = -20; x < W + 20; x += 28) {
+        ctx.fillRect(x, H - 38, 16, 5);
+        ctx.fillRect(x + 8, H - 19, 16, 5);
+      }
+    }
+
+    function drawPipe(pipe) {
+      const width = settings.pipeWidth;
+      const capHeight = 22;
+
+      ctx.fillStyle = "#278c42";
+      ctx.fillRect(pipe.x, 0, width, pipe.topHeight);
+      ctx.fillRect(pipe.x, pipe.bottomY, width, H - settings.groundHeight - pipe.bottomY);
+
+      ctx.fillStyle = "#39af54";
+      ctx.fillRect(pipe.x + 7, 0, 14, pipe.topHeight);
+      ctx.fillRect(pipe.x + 7, pipe.bottomY, 14, H - settings.groundHeight - pipe.bottomY);
+
+      ctx.fillStyle = "#1d6f34";
+      ctx.fillRect(pipe.x + width - 8, 0, 8, pipe.topHeight);
+      ctx.fillRect(
+        pipe.x + width - 8,
+        pipe.bottomY,
+        8,
+        H - settings.groundHeight - pipe.bottomY
+      );
+
+      ctx.fillStyle = "#2d9e49";
+      ctx.fillRect(pipe.x - 5, pipe.topHeight - capHeight, width + 10, capHeight);
+      ctx.fillRect(pipe.x - 5, pipe.bottomY, width + 10, capHeight);
+
+      ctx.fillStyle = "#17632f";
+      ctx.fillRect(pipe.x - 5, pipe.topHeight - 5, width + 10, 5);
+      ctx.fillRect(pipe.x - 5, pipe.bottomY + capHeight - 5, width + 10, 5);
+    }
+
+    function drawBird() {
+      ctx.save();
+      ctx.translate(bird.x, bird.y);
+      ctx.rotate(bird.rotation);
+
+      ctx.fillStyle = "#f4ae22";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 22, 17, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#f8c53c";
+      ctx.beginPath();
+      ctx.ellipse(-5, 8, 15, 10, -0.35, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ec7f1c";
+      ctx.beginPath();
+      ctx.moveTo(-19, -2);
+      ctx.lineTo(-34, -10);
+      ctx.lineTo(-22, 8);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(8, -7, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(10, -7, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#f26d21";
+      ctx.beginPath();
+      ctx.moveTo(20, 2);
+      ctx.lineTo(34, 7);
+      ctx.lineTo(20, 12);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function draw() {
+      drawBackground();
+
+      for (const pipe of pipes) {
+        drawPipe(pipe);
+      }
+
+      drawBird();
+    }
+
+    function loop(timestamp) {
+      if (!gameRunning) return;
+
+      const delta = Math.min(timestamp - lastTime, 40);
+      lastTime = timestamp;
+
+      update(delta);
+      draw();
+
+      if (gameRunning) {
+        animationId = requestAnimationFrame(loop);
+      }
+    }
+
+    function handleInput(event) {
+      if (event) event.preventDefault();
+
+      if (!gameRunning) {
+        if (!overlay.classList.contains("hidden")) {
+          startGame();
+        }
+        return;
+      }
+
+      flap();
+    }
+
+    playButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      startGame();
+    });
+
+    canvas.addEventListener("pointerdown", handleInput);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Space" || event.code === "ArrowUp") {
+        handleInput(event);
+      }
+    });
+
+    updateBest();
+    draw();
   </script>
 </body>
 </html>
