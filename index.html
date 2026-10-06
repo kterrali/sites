@@ -1,525 +1,457 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sky Hopper</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Next Web Lab — Le web de demain</title>
+
   <style>
     :root {
-      --panel: rgba(10, 22, 44, 0.76);
-      --accent: #ffd54a;
-      --text: #ffffff;
+      color-scheme: dark;
+      --bg: #090b12;
+      --surface: #141823;
+      --text: #f1f3ff;
+      --muted: #a6adc4;
+      --border: #ffffff20;
+      --accent: #b4a0ff;
+      --secondary: #66e4de;
+      --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f4f5fb;
+      --surface: #ffffff;
+      --text: #161a2b;
+      --muted: #555e76;
+      --border: #161a2b25;
+      --accent: #6544ce;
+      --secondary: #087e80;
     }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background: radial-gradient(circle at top, #52c7f1, #1c78bf);
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    #game-wrap {
-      position: relative;
-      width: min(92vw, 420px);
-      aspect-ratio: 9 / 16;
-      max-height: 90vh;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.42);
-      background: #75d6f7;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: pointer;
-    }
-
-    #hud {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
       color: var(--text);
+      line-height: 1.6;
     }
 
-    #score {
-      position: absolute;
-      top: 28px;
-      width: 100%;
-      text-align: center;
-      font-size: clamp(34px, 9vw, 54px);
-      font-weight: 900;
-      line-height: 1;
-      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.22);
-    }
-
-    #best {
-      position: absolute;
-      top: 92px;
-      width: 100%;
-      text-align: center;
-      font-weight: 700;
-      font-size: 14px;
-      text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    #overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background: linear-gradient(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.28));
-      transition: opacity 0.2s ease;
-    }
-
-    #card {
-      width: min(100%, 325px);
-      padding: 26px 22px;
-      border: 3px solid rgba(255, 255, 255, 0.78);
-      border-radius: 20px;
-      text-align: center;
-      color: white;
-      background: var(--panel);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(8px);
-    }
-
-    #card h1 {
-      margin: 0 0 10px;
-      color: var(--accent);
-      font-size: 34px;
-      letter-spacing: 0.4px;
-      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    #card p {
-      margin: 8px 0;
-      line-height: 1.45;
-      font-size: 15px;
-    }
-
-    #card .result {
-      display: none;
-      margin: 18px 0;
-      padding: 13px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.12);
-    }
+    button, a { -webkit-tap-highlight-color: transparent; }
 
     button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 14px 16px;
-      border: 0;
-      border-radius: 12px;
-      color: #18223d;
-      background: var(--accent);
-      font-size: 16px;
-      font-weight: 900;
+      font: inherit;
       cursor: pointer;
-      box-shadow: 0 4px 0 #ce9f10;
-      transition: transform 0.08s ease;
     }
 
-    button:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #ce9f10;
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 3px solid var(--secondary);
+      outline-offset: 5px;
     }
 
-    .hidden {
-      opacity: 0;
-      pointer-events: none !important;
+    .skip-link {
+      position: fixed;
+      top: -100px;
+      left: 16px;
+      z-index: 10;
+      padding: 12px;
+      background: var(--surface);
     }
 
-    #hint {
+    .skip-link:focus { top: 16px; }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    nav {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding-block: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: -.04em;
+      font-size: 1.3rem;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-actions a { text-decoration: none; }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      transition: transform .2s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button.primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .hero {
+      position: relative;
+      padding-block: clamp(70px, 12vw, 150px);
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
       position: absolute;
-      bottom: 22px;
-      width: 100%;
-      color: rgba(255, 255, 255, 0.92);
-      text-align: center;
-      font-size: 13px;
-      font-weight: bold;
-      text-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+      inset: 0;
+      z-index: -1;
       pointer-events: none;
+      background:
+        radial-gradient(ellipse at 85% 30%, #9775ff20, transparent 55%),
+        radial-gradient(ellipse at 10% 80%, #66e4de12, transparent 45%);
+    }
+
+    .eyebrow {
+      color: var(--secondary);
+      text-transform: uppercase;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 20px 0;
+      font-size: clamp(3rem, 8vw, 6.8rem);
+      line-height: 1.03;
+      letter-spacing: -.065em;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .intro {
+      max-width: 580px;
+      color: var(--muted);
+      font-size: 1.15rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    section { scroll-margin-top: 24px; }
+
+    .playground { padding-block: 40px 90px; }
+
+    h2 {
+      margin: 8px 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -.04em;
+    }
+
+    .section-description { color: var(--muted); }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-block: 28px;
+    }
+
+    .filter {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      padding: 9px 16px;
+    }
+
+    .filter[aria-pressed="true"] {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .card[hidden] { display: none; }
+
+    .preview {
+      height: 150px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .sample {
+      width: 76px;
+      height: 76px;
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+      border-radius: 20px;
+    }
+
+    .sample.round { border-radius: 50%; }
+
+    .sample.outline {
+      background: transparent;
+      border: 3px solid var(--accent);
+      transform: rotate(-12deg);
+    }
+
+    .card h3 { margin: 12px 0 8px; }
+
+    .card p {
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    .badge {
+      font-size: .75rem;
+      color: var(--secondary);
+    }
+
+    .about {
+      padding-block: 40px 70px;
+      border-top: 1px solid var(--border);
+    }
+
+    .about p { max-width: 680px; color: var(--muted); }
+
+    footer {
+      padding-block: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .button { transition: none; }
+      .button:hover { transform: none; }
     }
   </style>
 </head>
+
 <body>
-  <main id="game-wrap">
-    <canvas id="gameCanvas"></canvas>
+  <a class="skip-link" href="#main">Aller au contenu</a>
 
-    <div id="hud">
-      <div id="score">0</div>
-      <div id="best">Meilleur score : 0</div>
-      <div id="hint">ESPACE / CLIC / TAP pour voler</div>
-    </div>
+  <header>
+    <nav class="container" aria-label="Navigation principale">
+      <a class="logo" href="#">Next Web<span> Lab.</span></a>
 
-    <section id="overlay">
-      <div id="card">
-        <h1 id="title">Sky Hopper</h1>
-        <p id="description">
-          Traverse les tuyaux sans les toucher.<br />
-          Appuie sur <strong>Espace</strong>, clique ou touche l’écran.
+      <div class="nav-actions">
+        <a href="#playground">Playground</a>
+        <button class="button" id="theme-toggle" type="button">
+          Changer le thème
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow">Un terrain de jeu pour les interfaces</p>
+        <h1>Le web de demain.<br><span>À explorer aujourd’hui.</span></h1>
+        <p class="intro">
+          Un laboratoire interactif pour expérimenter les formes,
+          les thèmes, les animations et les nouvelles interactions web.
         </p>
 
-        <div class="result" id="result"></div>
-
-        <button id="playButton">JOUER</button>
+        <div class="hero-actions">
+          <a class="button primary" href="#playground">Explorer le Playground</a>
+          <a class="button" href="#about">Découvrir le projet</a>
+        </div>
       </div>
+    </section>
+
+    <section class="playground container" id="playground">
+      <p class="eyebrow">Playground</p>
+      <h2>Une idée. Une expérience.</h2>
+      <p class="section-description">
+        Première sélection de modules à développer.
+        Les aperçus sont illustratifs.
+      </p>
+
+      <div class="filters" role="group" aria-label="Filtrer les modules">
+        <button class="filter" data-filter="all" aria-pressed="true">Tout</button>
+        <button class="filter" data-filter="styles" aria-pressed="false">Styles</button>
+        <button class="filter" data-filter="motion" aria-pressed="false">Animations</button>
+        <button class="filter" data-filter="interaction" aria-pressed="false">Interactions</button>
+      </div>
+
+      <p id="result-count" class="section-description" role="status"></p>
+
+      <div class="grid">
+        <article class="card" data-category="styles">
+          <div class="preview" aria-hidden="true"><div class="sample"></div></div>
+          <span class="badge">Styles · À développer</span>
+          <h3>Formes et contours</h3>
+          <p>Explorer différents coins, silhouettes et bordures.</p>
+        </article>
+
+        <article class="card" data-category="styles">
+          <div class="preview" aria-hidden="true"><div class="sample round"></div></div>
+          <span class="badge">Styles · À développer</span>
+          <h3>Couleurs et thèmes</h3>
+          <p>Composer des palettes et tester leurs variations.</p>
+        </article>
+
+        <article class="card" data-category="motion">
+          <div class="preview" aria-hidden="true"><div class="sample outline"></div></div>
+          <span class="badge">Animations · À développer</span>
+          <h3>Transitions de vue</h3>
+          <p>Imaginer les passages entre les différents écrans.</p>
+        </article>
+
+        <article class="card" data-category="motion">
+          <div class="preview" aria-hidden="true"><div class="sample round"></div></div>
+          <span class="badge">Animations · À développer</span>
+          <h3>Défilement vivant</h3>
+          <p>Relier les effets visuels à la progression dans la page.</p>
+        </article>
+
+        <article class="card" data-category="interaction">
+          <div class="preview" aria-hidden="true"><div class="sample"></div></div>
+          <span class="badge">Interactions · À développer</span>
+          <h3>Dialogues et panneaux</h3>
+          <p>Créer des espaces de réglage et des interfaces contextuelles.</p>
+        </article>
+
+        <article class="card" data-category="styles">
+          <div class="preview" aria-hidden="true"><div class="sample outline"></div></div>
+          <span class="badge">Styles · À développer</span>
+          <h3>Typographie expressive</h3>
+          <p>Expérimenter les tailles, les espacements et la composition.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="about container" id="about">
+      <p class="eyebrow">Notre intention</p>
+      <h2>Expérimenter sans bloquer.</h2>
+      <p>
+        Chaque futur module proposera une démonstration, des réglages,
+        son code et une indication de compatibilité. Les expériences
+        resteront séparées des fonctions essentielles du site.
+      </p>
     </section>
   </main>
 
+  <footer>
+    <div class="container">Next Web Lab — Prototype 01</div>
+  </footer>
+
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    const root = document.documentElement;
+    const themeButton = document.querySelector("#theme-toggle");
+    const preferredTheme = matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
 
-    const wrap = document.getElementById("game-wrap");
-    const scoreElement = document.getElementById("score");
-    const bestElement = document.getElementById("best");
-    const overlay = document.getElementById("overlay");
-    const playButton = document.getElementById("playButton");
-    const title = document.getElementById("title");
-    const description = document.getElementById("description");
-    const result = document.getElementById("result");
-    const hint = document.getElementById("hint");
+    let savedTheme = null;
+    try {
+      savedTheme = localStorage.getItem("next-web-theme");
+    } catch {}
 
-    const W = 420;
-    const H = 700;
-    canvas.width = W;
-    canvas.height = H;
-
-    let bestScore = Number(localStorage.getItem("skyHopperBest") || 0);
-    let score = 0;
-    let gameRunning = false;
-    let gameStarted = false;
-    let animationId = null;
-    let lastTime = 0;
-    let elapsed = 0;
-
-    const bird = {
-      x: 105,
-      y: H / 2,
-      radius: 17,
-      velocity: 0,
-      rotation: 0
-    };
-
-    const pipes = [];
-
-    const settings = {
-      gravity: 0.38,
-      flapPower: -6.7,
-      pipeWidth: 66,
-      pipeGap: 165,
-      pipeSpeed: 2.6,
-      spawnEvery: 1500,
-      groundHeight: 90
-    };
-
-    function updateBest() {
-      bestElement.textContent = `Meilleur score : ${bestScore}`;
+    function setTheme(theme) {
+      root.dataset.theme = theme;
+      themeButton.textContent = theme === "dark"
+        ? "Passer au thème clair"
+        : "Passer au thème sombre";
     }
 
-    function resetGame() {
-      score = 0;
-      elapsed = 0;
-      pipes.length = 0;
+    setTheme(["light", "dark"].includes(savedTheme)
+      ? savedTheme
+      : preferredTheme);
 
-      bird.y = H / 2;
-      bird.velocity = 0;
-      bird.rotation = 0;
+    themeButton.addEventListener("click", () => {
+      const theme = root.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(theme);
 
-      scoreElement.textContent = score;
-      updateBest();
-    }
+      try {
+        localStorage.setItem("next-web-theme", theme);
+      } catch {}
+    });
 
-    function startGame() {
-      cancelAnimationFrame(animationId);
+    const filters = document.querySelectorAll(".filter");
+    const cards = document.querySelectorAll(".card");
+    const resultCount = document.querySelector("#result-count");
 
-      resetGame();
-      gameRunning = true;
-      gameStarted = true;
-      lastTime = performance.now();
+    function applyFilter(category) {
+      let visible = 0;
 
-      overlay.classList.add("hidden");
-      hint.style.display = "block";
-
-      flap();
-      animationId = requestAnimationFrame(loop);
-    }
-
-    function flap() {
-      if (!gameRunning) return;
-      bird.velocity = settings.flapPower;
-    }
-
-    function gameOver() {
-      if (!gameRunning) return;
-
-      gameRunning = false;
-      cancelAnimationFrame(animationId);
-
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem("skyHopperBest", bestScore);
-      }
-
-      updateBest();
-      hint.style.display = "none";
-
-      title.textContent = "Partie terminée";
-      description.textContent = score === 0
-        ? "Presque ! Essaie de garder un rythme régulier."
-        : "Bien joué ! Tu peux faire encore mieux.";
-
-      result.style.display = "block";
-      result.innerHTML = `
-        Score : <strong>${score}</strong><br>
-        Meilleur score : <strong>${bestScore}</strong>
-      `;
-
-      playButton.textContent = "REJOUER";
-      overlay.classList.remove("hidden");
-    }
-
-    function spawnPipe() {
-      const minTop = 85;
-      const maxTop = H - settings.groundHeight - settings.pipeGap - 85;
-      const gapY = Math.random() * (maxTop - minTop) + minTop;
-
-      pipes.push({
-        x: W + 20,
-        topHeight: gapY,
-        bottomY: gapY + settings.pipeGap,
-        counted: false
+      cards.forEach(card => {
+        card.hidden = category !== "all"
+          && card.dataset.category !== category;
+        if (!card.hidden) visible++;
       });
+
+      filters.forEach(button => {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.filter === category)
+        );
+      });
+
+      resultCount.textContent = `${visible} module${visible > 1 ? "s" : ""} affiché${visible > 1 ? "s" : ""}`;
     }
 
-    function update(delta) {
-      const factor = delta / 16.67;
-
-      bird.velocity += settings.gravity * factor;
-      bird.y += bird.velocity * factor;
-      bird.rotation = Math.max(-0.45, Math.min(1.1, bird.velocity * 0.08));
-
-      elapsed += delta;
-
-      if (elapsed >= settings.spawnEvery) {
-        spawnPipe();
-        elapsed = 0;
-      }
-
-      for (let i = pipes.length - 1; i >= 0; i--) {
-        const pipe = pipes[i];
-        pipe.x -= settings.pipeSpeed * factor;
-
-        if (!pipe.counted && pipe.x + settings.pipeWidth < bird.x) {
-          pipe.counted = true;
-          score++;
-          scoreElement.textContent = score;
-        }
-
-        if (pipe.x + settings.pipeWidth < -20) {
-          pipes.splice(i, 1);
-        }
-      }
-
-      const birdLeft = bird.x - bird.radius;
-      const birdRight = bird.x + bird.radius;
-      const birdTop = bird.y - bird.radius;
-      const birdBottom = bird.y + bird.radius;
-
-      if (birdTop < 0 || birdBottom > H - settings.groundHeight) {
-        gameOver();
-        return;
-      }
-
-      for (const pipe of pipes) {
-        const horizontalCollision =
-          birdRight > pipe.x &&
-          birdLeft < pipe.x + settings.pipeWidth;
-
-        const verticalCollision =
-          birdTop < pipe.topHeight ||
-          birdBottom > pipe.bottomY;
-
-        if (horizontalCollision && verticalCollision) {
-          gameOver();
-          return;
-        }
-      }
-    }
-
-    function drawCloud(x, y, scale = 1) {
-      ctx.fillStyle = "rgba(255,255,255,0.78)";
-      ctx.beginPath();
-      ctx.arc(x, y, 18 * scale, 0, Math.PI * 2);
-      ctx.arc(x + 23 * scale, y - 10 * scale, 24 * scale, 0, Math.PI * 2);
-      ctx.arc(x + 50 * scale, y, 17 * scale, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawBackground() {
-      const sky = ctx.createLinearGradient(0, 0, 0, H);
-      sky.addColorStop(0, "#63d4f5");
-      sky.addColorStop(1, "#c6f5ff");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, W, H);
-
-      drawCloud(50, 125, 0.85);
-      drawCloud(280, 210, 0.65);
-      drawCloud(190, 390, 0.48);
-
-      ctx.fillStyle = "#7acb59";
-      ctx.fillRect(0, H - settings.groundHeight - 12, W, 12);
-
-      ctx.fillStyle = "#d9a44a";
-      ctx.fillRect(0, H - settings.groundHeight, W, settings.groundHeight);
-
-      ctx.fillStyle = "#c48b39";
-      for (let x = -20; x < W + 20; x += 28) {
-        ctx.fillRect(x, H - 38, 16, 5);
-        ctx.fillRect(x + 8, H - 19, 16, 5);
-      }
-    }
-
-    function drawPipe(pipe) {
-      const width = settings.pipeWidth;
-      const capHeight = 22;
-
-      ctx.fillStyle = "#278c42";
-      ctx.fillRect(pipe.x, 0, width, pipe.topHeight);
-      ctx.fillRect(pipe.x, pipe.bottomY, width, H - settings.groundHeight - pipe.bottomY);
-
-      ctx.fillStyle = "#39af54";
-      ctx.fillRect(pipe.x + 7, 0, 14, pipe.topHeight);
-      ctx.fillRect(pipe.x + 7, pipe.bottomY, 14, H - settings.groundHeight - pipe.bottomY);
-
-      ctx.fillStyle = "#1d6f34";
-      ctx.fillRect(pipe.x + width - 8, 0, 8, pipe.topHeight);
-      ctx.fillRect(
-        pipe.x + width - 8,
-        pipe.bottomY,
-        8,
-        H - settings.groundHeight - pipe.bottomY
-      );
-
-      ctx.fillStyle = "#2d9e49";
-      ctx.fillRect(pipe.x - 5, pipe.topHeight - capHeight, width + 10, capHeight);
-      ctx.fillRect(pipe.x - 5, pipe.bottomY, width + 10, capHeight);
-
-      ctx.fillStyle = "#17632f";
-      ctx.fillRect(pipe.x - 5, pipe.topHeight - 5, width + 10, 5);
-      ctx.fillRect(pipe.x - 5, pipe.bottomY + capHeight - 5, width + 10, 5);
-    }
-
-    function drawBird() {
-      ctx.save();
-      ctx.translate(bird.x, bird.y);
-      ctx.rotate(bird.rotation);
-
-      ctx.fillStyle = "#f4ae22";
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 22, 17, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#f8c53c";
-      ctx.beginPath();
-      ctx.ellipse(-5, 8, 15, 10, -0.35, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#ec7f1c";
-      ctx.beginPath();
-      ctx.moveTo(-19, -2);
-      ctx.lineTo(-34, -10);
-      ctx.lineTo(-22, 8);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle = "white";
-      ctx.beginPath();
-      ctx.arc(8, -7, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#222";
-      ctx.beginPath();
-      ctx.arc(10, -7, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#f26d21";
-      ctx.beginPath();
-      ctx.moveTo(20, 2);
-      ctx.lineTo(34, 7);
-      ctx.lineTo(20, 12);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    function draw() {
-      drawBackground();
-
-      for (const pipe of pipes) {
-        drawPipe(pipe);
-      }
-
-      drawBird();
-    }
-
-    function loop(timestamp) {
-      if (!gameRunning) return;
-
-      const delta = Math.min(timestamp - lastTime, 40);
-      lastTime = timestamp;
-
-      update(delta);
-      draw();
-
-      if (gameRunning) {
-        animationId = requestAnimationFrame(loop);
-      }
-    }
-
-    function handleInput(event) {
-      if (event) event.preventDefault();
-
-      if (!gameRunning) {
-        if (!overlay.classList.contains("hidden")) {
-          startGame();
-        }
-        return;
-      }
-
-      flap();
-    }
-
-    playButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      startGame();
+    filters.forEach(button => {
+      button.addEventListener("click", () => {
+        applyFilter(button.dataset.filter);
+      });
     });
 
-    canvas.addEventListener("pointerdown", handleInput);
-
-    window.addEventListener("keydown", (event) => {
-      if (event.code === "Space" || event.code === "ArrowUp") {
-        handleInput(event);
-      }
-    });
-
-    updateBest();
-    draw();
+    applyFilter("all");
   </script>
 </body>
 </html>
